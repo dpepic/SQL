@@ -77,7 +77,7 @@ CREATE TABLE `artikal` (
 
 LOCK TABLES `artikal` WRITE;
 /*!40000 ALTER TABLE `artikal` DISABLE KEYS */;
-INSERT INTO `artikal` (`ID`, `Naziv`, `Lager`, `Merna jedinica`, `Ulazna cena`, `Marza procenat`, `Porez procenat`) VALUES (2,'Plazam',100,'kom',100,25,10),(3,'Pljuge',20,'kom',250,10,17),(4,'Kafa',500,'g',20,35,20);
+INSERT INTO `artikal` (`ID`, `Naziv`, `Lager`, `Merna jedinica`, `Ulazna cena`, `Marza procenat`, `Porez procenat`) VALUES (2,'Plazam',100,'kom',100,25,10),(3,'Pljuge',15,'kom',250,10,17),(4,'Kafa',500,'g',20,35,20);
 /*!40000 ALTER TABLE `artikal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +151,7 @@ CREATE TABLE `racun` (
   PRIMARY KEY (`ID`),
   KEY `PravnoLice_idx` (`Lice`),
   CONSTRAINT `PravnoLice` FOREIGN KEY (`Lice`) REFERENCES `lice` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,7 +160,7 @@ CREATE TABLE `racun` (
 
 LOCK TABLES `racun` WRITE;
 /*!40000 ALTER TABLE `racun` DISABLE KEYS */;
-INSERT INTO `racun` VALUES (3,'2011-01-01 00:00:00',NULL,NULL,459.25),(4,'2002-01-01 00:00:00',NULL,NULL,459.25),(5,'2019-04-02 00:00:00',NULL,NULL,169.9);
+INSERT INTO `racun` VALUES (3,'2011-01-01 00:00:00',NULL,NULL,459.25),(4,'2002-01-01 00:00:00',NULL,NULL,459.25),(5,'2019-04-02 00:00:00',NULL,NULL,169.9),(6,'2020-01-01 00:00:00',NULL,NULL,15358.75),(7,'1900-05-05 00:00:00',NULL,NULL,0);
 /*!40000 ALTER TABLE `racun` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,6 +174,7 @@ DROP TABLE IF EXISTS `racun_artikal`;
 CREATE TABLE `racun_artikal` (
   `ID racuna` int(10) unsigned NOT NULL,
   `ID artikla` int(10) unsigned NOT NULL,
+  `kolicina` int(10) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID racuna`,`ID artikla`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -184,7 +185,7 @@ CREATE TABLE `racun_artikal` (
 
 LOCK TABLES `racun_artikal` WRITE;
 /*!40000 ALTER TABLE `racun_artikal` DISABLE KEYS */;
-INSERT INTO `racun_artikal` VALUES (3,1),(3,2),(3,3),(4,2),(4,3),(5,2),(5,4);
+INSERT INTO `racun_artikal` VALUES (3,1,1),(3,2,1),(3,3,1),(4,2,1),(4,3,1),(5,2,1),(5,4,1),(6,2,100),(6,3,5);
 /*!40000 ALTER TABLE `racun_artikal` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -197,7 +198,36 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_INSERT` AFTER INSERT ON `racun_artikal` FOR EACH ROW BEGIN
-	SELECT SUM(a.`Izlazna cena`) 
+	SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
+		FROM artikal a
+		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
+		WHERE `ID racuna` = new.`ID racuna`
+		INTO @totalZaRacun;
+    
+		UPDATE artikal
+        SET Lager = Lager - new.`Kolicina`
+        WHERE ID = new.`ID artikla`;
+        
+		UPDATE racun 
+		SET Total = @totalZaRacun
+		WHERE ID = new.`ID racuna`;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_UPDATE` AFTER UPDATE ON `racun_artikal` FOR EACH ROW BEGIN
+SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
 		FROM artikal a
 		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
 		WHERE `ID racuna` = new.`ID racuna`
@@ -206,6 +236,31 @@ DELIMITER ;;
 		UPDATE racun 
 		SET Total = @totalZaRacun
 		WHERE ID = new.`ID racuna`;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_DELETE` AFTER DELETE ON `racun_artikal` FOR EACH ROW BEGIN
+SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
+		FROM artikal a
+		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
+		WHERE `ID racuna` = deleted.`ID racuna`
+		INTO @totalZaRacun;
+    
+		UPDATE racun 
+		SET Total = @totalZaRacun
+		WHERE ID = deleted.`ID racuna`;
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -281,4 +336,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-04 11:48:13
+-- Dump completed on 2019-02-05 10:23:16
