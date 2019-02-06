@@ -10,6 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainWindow {
 
@@ -38,6 +41,15 @@ public class MainWindow {
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		
+		JButton btnTest = new JButton("Test");
+		btnTest.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+			}
+		});
+		panel.add(btnTest);
+		
 		JScrollPane scrollPane = new JScrollPane();
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 		
@@ -56,7 +68,7 @@ public class MainWindow {
 		redV.add("Red");
 		podaci.addRow(redV);*/
 		
-		Comm.probnaKonekcija();
+		Comm.dajPodatke();
 		
 		for (int i = 0; i < Comm.naziviKolona.length; i++)
 		{

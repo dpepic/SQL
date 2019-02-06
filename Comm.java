@@ -11,25 +11,31 @@ public class Comm {
 	public static String[] naziviKolona;
 	public static Vector<String[]> sviRedovi = new Vector<String[]>();
 	
-	public static void probnaKonekcija() 
+	private static Connection nasaKonekcija  = null;
+	private static Statement kom = null;
+	
+	public static void ozbiljnaKonekcija()
 	{
 		try 
 		{
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) 
+			Connection nasaKonekcija = DriverManager.getConnection("jdbc:mysql://localhost", "javaTest", "NekaSifra");
+			kom = nasaKonekcija.createStatement();
+			kom.executeQuery("USE pos");
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) 
 		{
 			e.printStackTrace();
 		} 
-		
+	}
+	
+	public static void dajPodatke() 
+	{
+		ozbiljnaKonekcija();
+		sviRedovi.clear();
 		try
-		{
-			Connection nasaKonekcija = DriverManager.getConnection("jdbc:mysql://localhost", "javaTest", "NekaSifra");
-			Statement kom = nasaKonekcija.createStatement();
-			kom.executeQuery("USE pos");
-			ResultSet rs = kom.executeQuery("SELECT * FROM racun");
-			
+		{	
+			ResultSet rs = kom.executeQuery("SELECT Naziv, Lager FROM artikal");	
 			int brojKolona = rs.getMetaData().getColumnCount();
-
 			naziviKolona = new String[brojKolona];
 			for (int i = 1; i <= brojKolona; i++)
 			{
@@ -45,14 +51,26 @@ public class Comm {
 				}
 				
 				sviRedovi.add(red);
-			}
-			
-							
+			}		
 			nasaKonekcija.close();
 		} catch (SQLException joj)
 		{
 			joj.printStackTrace();
 		}
+	}
+	
+	public static int obrisiRed(String tip, String IDreda)
+	{
+		ozbiljnaKonekcija();
+		try 
+		{
+			//Nesto nesto nesto
+			nasaKonekcija.close();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }
