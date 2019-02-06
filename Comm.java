@@ -1,14 +1,17 @@
 package test;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 
-public class Main {
+public class Comm {
 
-	public static void main(String[] args) 
+	public static String[] naziviKolona;
+	public static Vector<String[]> sviRedovi = new Vector<String[]>();
+	
+	public static void probnaKonekcija() 
 	{
 		try 
 		{
@@ -23,17 +26,25 @@ public class Main {
 			Connection nasaKonekcija = DriverManager.getConnection("jdbc:mysql://localhost", "javaTest", "NekaSifra");
 			Statement kom = nasaKonekcija.createStatement();
 			kom.executeQuery("USE pos");
-			String IDart = "2";
-			ResultSet rs = kom.executeQuery(String.format("CALL dajArtikal(%s)", IDart));
-			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++)
+			ResultSet rs = kom.executeQuery("SELECT * FROM racun");
+			
+			int brojKolona = rs.getMetaData().getColumnCount();
+
+			naziviKolona = new String[brojKolona];
+			for (int i = 1; i <= brojKolona; i++)
 			{
-				System.out.println("Kolona " + rs.getMetaData().getColumnName(i)
-									+ " je tipa " + rs.getMetaData().getColumnTypeName(i));
+				naziviKolona[i-1] = rs.getMetaData().getColumnName(i);
 			}
 			
 			while (rs.next())
-			{
-				System.out.println(rs.getString("Naziv"));
+			{     
+				String[] red = new String[brojKolona];
+				for (int i = 1; i <= brojKolona; i++)
+				{
+					red[i-1] = rs.getString(i);
+				}
+				
+				sviRedovi.add(red);
 			}
 			
 							
