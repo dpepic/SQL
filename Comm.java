@@ -19,7 +19,7 @@ public class Comm {
 		try 
 		{
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-			Connection nasaKonekcija = DriverManager.getConnection("jdbc:mysql://localhost", "javaTest", "NekaSifra");
+			nasaKonekcija = DriverManager.getConnection("jdbc:mysql://localhost", "javaTest", "NekaSifra");
 			kom = nasaKonekcija.createStatement();
 			kom.executeQuery("USE pos");
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) 
@@ -64,7 +64,7 @@ public class Comm {
 		ozbiljnaKonekcija();
 		try 
 		{
-			//Nesto nesto nesto
+			ResultSet rs = kom.executeQuery(String.format("CALL obrisiRed('%s', '%s')", IDreda, tip));
 			nasaKonekcija.close();
 		} catch (SQLException e) {
 			

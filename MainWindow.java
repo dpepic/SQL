@@ -41,14 +41,20 @@ public class MainWindow {
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		
-		JButton btnTest = new JButton("Test");
-		btnTest.addActionListener(new ActionListener() 
+		JButton btnObrisi = new JButton("Obrisi");
+		btnObrisi.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent arg0) 
 			{
+				if (tabela.getSelectedRowCount() == 1)
+				{
+					
+					Comm.obrisiRed("artikal", tabela.getModel().getValueAt(tabela.getSelectedRow(), 0).toString());
+					tabela.setModel(ucitajPodatke());
+				}
 			}
 		});
-		panel.add(btnTest);
+		panel.add(btnObrisi);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -56,7 +62,7 @@ public class MainWindow {
 		tabela = new JTable();
 		tabela.setDefaultEditor(Object.class, null);
 		tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		DefaultTableModel podaci = new DefaultTableModel();
+		tabela.setModel(ucitajPodatke());
 		
 		//Rucni rad :) 
 		/*podaci.addColumn("Test kolona");
@@ -68,6 +74,13 @@ public class MainWindow {
 		redV.add("Red");
 		podaci.addRow(redV);*/
 		
+		
+		scrollPane.setViewportView(tabela);	
+	}
+	
+	public DefaultTableModel ucitajPodatke()
+	{
+		DefaultTableModel podaci = new DefaultTableModel();
 		Comm.dajPodatke();
 		
 		for (int i = 0; i < Comm.naziviKolona.length; i++)
@@ -80,7 +93,6 @@ public class MainWindow {
 			podaci.addRow(red);
 		}
 		
-		tabela.setModel(podaci);
-		scrollPane.setViewportView(tabela);	
+		return podaci;
 	}
 }
