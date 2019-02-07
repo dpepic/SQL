@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 public class MainWindow {
@@ -55,6 +57,45 @@ public class MainWindow {
 			}
 		});
 		panel.add(btnObrisi);
+		
+		JButton btnUnos = new JButton("Unos");
+		btnUnos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				IzmenaArtikla dlg = new IzmenaArtikla(null);
+				dlg.addWindowListener(new WindowAdapter() 
+				{
+					@Override
+					public void windowClosed(WindowEvent arg0) 
+					{
+						tabela.setModel(ucitajPodatke());
+					}
+				});
+				dlg.setVisible(true);
+			}
+		});
+		panel.add(btnUnos);
+		
+		JButton btnIzmeni = new JButton("Izmeni");
+		btnIzmeni.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				if (tabela.getSelectedRowCount() == 1)
+				{
+					IzmenaArtikla dlg = new IzmenaArtikla(Comm.PK.get(tabela.getSelectedRow())[0]);
+					dlg.addWindowListener(new WindowAdapter() 
+					{
+						@Override
+						public void windowClosed(WindowEvent arg0) 
+						{
+							tabela.setModel(ucitajPodatke());
+						}
+					});
+					dlg.setVisible(true);
+				}
+			}
+		});
+		panel.add(btnIzmeni);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
