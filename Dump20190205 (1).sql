@@ -197,7 +197,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_INSERT` AFTER INSERT ON `racun_artikal` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `racun_artikal_AFTER_INSERT` AFTER INSERT ON `racun_artikal` FOR EACH ROW BEGIN
 	SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
 		FROM artikal a
 		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
@@ -226,7 +226,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_UPDATE` AFTER UPDATE ON `racun_artikal` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `racun_artikal_AFTER_UPDATE` AFTER UPDATE ON `racun_artikal` FOR EACH ROW BEGIN
 SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
 		FROM artikal a
 		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
@@ -251,7 +251,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`rechie`@`%`*/ /*!50003 TRIGGER `racun_artikal_AFTER_DELETE` AFTER DELETE ON `racun_artikal` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `racun_artikal_AFTER_DELETE` AFTER DELETE ON `racun_artikal` FOR EACH ROW BEGIN
 SELECT SUM(a.`Izlazna cena` * ar.kolicina) 
 		FROM artikal a
 		INNER JOIN racun_artikal ar ON a.ID = ar.`ID artikla`
@@ -285,7 +285,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`rechie`@`%` PROCEDURE `dajArtikal`(IN IDart INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `dajArtikal`(IN IDart INT)
 BEGIN
 	SELECT * FROM artikal
     WHERE ID = IDart;
@@ -305,7 +305,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`rechie`@`%` PROCEDURE `dajArtikleProdate`(IN IDracuna INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `dajArtikleProdate`(IN IDracuna INT)
 BEGIN
 
 IF (IDRacuna > 0) THEN
@@ -359,7 +359,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`rechie`@`%` PROCEDURE `nemaNaStanju`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `nemaNaStanju`()
 BEGIN
 SELECT * FROM artikal
 WHERE Lager = 0;
@@ -379,7 +379,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`rechie`@`%` PROCEDURE `obrisiRed`(IN IDreda VARCHAR(45), IN tabela VARCHAR(45))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obrisiRed`(IN IDreda VARCHAR(45), IN tabela VARCHAR(45))
 BEGIN
 CASE (tabela)
 	WHEN "artikal" THEN
@@ -402,7 +402,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`rechie`@`%` PROCEDURE `totalZaRacun`(IN IDrac INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `totalZaRacun`(IN IDrac INT)
 BEGIN
 SELECT SUM(a.`Izlazna cena`) 
 	FROM artikal a
