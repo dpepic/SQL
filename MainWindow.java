@@ -62,7 +62,7 @@ public class MainWindow {
 		btnUnos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				IzmenaArtikla dlg = new IzmenaArtikla(null);
+				IzmenaArtikla dlg = new IzmenaArtikla("-1");
 				dlg.addWindowListener(new WindowAdapter() 
 				{
 					@Override

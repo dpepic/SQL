@@ -11,7 +11,7 @@ public class Comm {
 
 	public static String[] naziviKolona;
 	public static Vector<String[]> sviRedovi = new Vector<String[]>();
-	public static Vector<String[]> PK = new Vector<String[]>();
+	//public static Vector<String[]> PK = new Vector<String[]>();
 	
 	private static Connection nasaKonekcija  = null;
 	private static Statement kom = null;
@@ -59,17 +59,17 @@ public class Comm {
 			while (rs.next())
 			{     
 				String[] red = new String[brojKolona];
-				String[] PKzaRed = new String[PKkolone.size()];
+				//String[] PKzaRed = new String[PKkolone.size()];
 				for (int i = 1; i <= brojKolona; i++)
 				{
 					red[i-1] = rs.getString(i);
-					if (PKkolone.contains(rs.getMetaData().getColumnName(i)))
-					{
-						PKzaRed[PKkolone.indexOf(rs.getMetaData().getColumnName(i))] = rs.getString(i);
-					}
+					//if (PKkolone.contains(rs.getMetaData().getColumnName(i)))
+					//{
+					//	PKzaRed[PKkolone.indexOf(rs.getMetaData().getColumnName(i))] = rs.getString(i);
+					//}
 				}
 
-				PK.add(PKzaRed);
+				//PK.add(PKzaRed);
 				sviRedovi.add(red);
 			}		
 			nasaKonekcija.close();
@@ -95,13 +95,13 @@ public class Comm {
 	}
 	
 	public static void izmenaArtikla(String naziv, String lager, String ulazna,
-			                       String marza, String porez)
+			                       String marza, String porez, String PK)
 	{
 		ozbiljnaKonekcija();
 		try
 		{
-			kom.executeQuery(String.format("CALL izmenaArtikla('%s', '%s', '%s', '%s', '%s')",
-					                        naziv, lager, ulazna, marza, porez));
+			kom.executeQuery(String.format("CALL izmenaArtikla('%s', '%s', '%s', '%s', '%s', '%s')",
+					                        naziv, lager, ulazna, marza, porez, PK));
 			nasaKonekcija.close();
 		} catch (SQLException e)
 		{

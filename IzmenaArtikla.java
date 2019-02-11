@@ -22,8 +22,10 @@ public class IzmenaArtikla extends JDialog {
 	private JTextField txtUlazna;
 	private JTextField txtMarza;
 	private JTextField txtPorez;
+	private String PK = null;
 	
 	public IzmenaArtikla(String PK) {
+		this.PK = PK;
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -93,7 +95,7 @@ public class IzmenaArtikla extends JDialog {
 					{
 						Comm.izmenaArtikla(txtNaziv.getText(), txtLager.getText(), 
 								         txtUlazna.getText(), txtMarza.getText(), 
-								         txtPorez.getText());
+								         txtPorez.getText(), PK);
 						dispose();
 					}
 				});
