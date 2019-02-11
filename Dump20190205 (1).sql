@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `pos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLL
 USE `pos`;
 -- MySQL dump 10.13  Distrib 8.0.14, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: pos
+-- Host: localhost    Database: pos
 -- ------------------------------------------------------
 -- Server version	8.0.13
 
@@ -68,7 +68,7 @@ CREATE TABLE `artikal` (
   UNIQUE KEY `Naziv_UNIQUE` (`Naziv`),
   KEY `Merna jedinica_idx` (`Merna jedinica`),
   CONSTRAINT `Merna jedinica` FOREIGN KEY (`Merna jedinica`) REFERENCES `jedinice` (`naziv jedinice`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,7 +77,7 @@ CREATE TABLE `artikal` (
 
 LOCK TABLES `artikal` WRITE;
 /*!40000 ALTER TABLE `artikal` DISABLE KEYS */;
-INSERT INTO `artikal` (`ID`, `Naziv`, `Lager`, `Merna jedinica`, `Ulazna cena`, `Marza procenat`, `Porez procenat`) VALUES (2,'Plazam',100,'kom',100,25,10),(3,'Pljuge',15,'kom',250,10,17),(4,'Kafa',500,'g',20,35,20);
+INSERT INTO `artikal` (`ID`, `Naziv`, `Lager`, `Merna jedinica`, `Ulazna cena`, `Marza procenat`, `Porez procenat`) VALUES (4,'Kafa',500,'g',20,35,20),(8,'nasda',200,'kom',100,25,14),(9,'Test',10,'kom',15,20,25);
 /*!40000 ALTER TABLE `artikal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,6 +275,26 @@ DELIMITER ;
 --
 -- Dumping routines for database 'pos'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `dajArtikal` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`rechie`@`%` PROCEDURE `dajArtikal`(IN IDart INT)
+BEGIN
+	SELECT * FROM artikal
+    WHERE ID = IDart;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `dajArtikleProdate` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -298,6 +318,74 @@ ELSE
 		FROM artikal a
 		INNER JOIN racun_artikal ra ON ra.`ID artikla` = a.ID;
 END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `izmenaArtikla` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `izmenaArtikla`(IN nzv VARCHAR(45), IN lager VARCHAR(45), IN ulazna VARCHAR(45),
+                                  IN marza VARCHAR(45), IN porez VARCHAR(45), IN PK VARCHAR(45))
+BEGIN
+	IF (PK = -1) THEN
+		INSERT INTO artikal
+		(`Naziv`, `Lager`, `Ulazna cena`, `Marza procenat`,
+		`Porez procenat`)
+		VALUES(nzv, lager, ulazna, marza, porez);
+	END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `nemaNaStanju` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`rechie`@`%` PROCEDURE `nemaNaStanju`()
+BEGIN
+SELECT * FROM artikal
+WHERE Lager = 0;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `obrisiRed` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`rechie`@`%` PROCEDURE `obrisiRed`(IN IDreda VARCHAR(45), IN tabela VARCHAR(45))
+BEGIN
+CASE (tabela)
+	WHEN "artikal" THEN
+		DELETE FROM artikal
+		WHERE ID = IDreda;
+END CASE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -336,4 +424,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-02-05 10:23:16
+-- Dump completed on 2019-02-11  8:40:47
